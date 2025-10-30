@@ -1,22 +1,18 @@
-# Bybit_trading_bot
-Trading Bot with Machine Learning
+# Crypto Market Predictor & Trading System
+Project: Algorithmic Trading Bot utilizing Technical and Sentiment Analysis
 
-This repository contains a trading bot based on a two-stage machine learning model.  
-It generates **BUY, SELL, or HOLD** signals using historical market data and technical indicators.
+This repository documents a robust, scalable system designed for generating precise trading signals in the cryptocurrency market. The system integrates machine learning with both traditional technical indicators and specialized news sentiment analysis.
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 ```
 ├── core/               # Strategy logic and data preprocessing
-├── static/             # Historical CSV files and generated reports
-│   ├── data/           # Raw historical price data
-│   ├── reports/        # Backtest results (plots, metrics)
+├── database            # Database creation and data loading
 ├── tests/              # Backtesting and testing logic
+├── notebooks           # Main data analyst/model training folder with ipynb
 ├── .gitignore          # Ignored files for version control
 ├── README.md           # Project overview (you are here)
-├── main.py             # Run backtests and generate reports
-├── polling_bot.py      # Live trading signals with trained models
 ├── requirements.txt    # Python dependencies
 ├── stage1_model.pkl    # Stage 1 model (Trade vs Hold)
 ├── stage2_model.pkl    # Stage 2 model (Buy vs Sell)
@@ -25,103 +21,63 @@ It generates **BUY, SELL, or HOLD** signals using historical market data and tec
 
 ---
 
-## 🔍 Description
-- **Core module (`core/`)**:  
-  Data preparation, feature engineering, and technical indicators.
-- **Static (`static/`)**:  
-  Contains historical price data and output reports with visualizations.
-- **Models**:  
-  - `stage1_model.pkl`: Decides whether to trade or hold  
-  - `stage2_model.pkl`: Determines direction (BUY or SELL)
+## Description
+The primary goal is to build a secure, readable, and scalable trading system focused on achieving a positive mathematical edge. This was accomplished by overcoming challenges like class imbalance and noisy raw data.
+Trading Signal Logic
+The model generates one of two signals:
+BUY: A high-confidence signal to enter a long position.
+HOLD: A signal to remain passive and await a favorable opportunity.
+Key Performance Indicators (KPIs)
+The minimum target was set to ensure profitable trading under a 1:2 Take Profit (TP) to Stop Loss (SL) ratio:
+Precision (Accuracy) ≥ 0.34
+Recall (Completeness) > 0.35
 
 ---
 
-## ⚙️ Installation
-```bash
-git clone https://github.com/yourusername/Bybit_trading_bot.git
-cd Bybit_trading_bot
-
-python -m venv venv
-# Windows
-venv\Scripts\activate
-# Linux / macOS
-source venv/bin/activate
-
-pip install -r requirements.txt
-```
+## Model Overview
+The trading system uses a single-stage classification model optimized for high interpretability and stability.
+Final Model Chosen: 
+Algorithm: Random Forest Classifier (Selected for its robust performance and interpretability over Linear Regression and Gradient Boosting).
+Best Validation Precision: ~0.375 (Exceeding the target of 0.34).
+Feature Engineering Strategy
+The predictive power comes from transforming raw data into high-quality features:
+Technical Indicators: Calculated using standard OHLCV data.
+Sentiment Analysis: Pre-trained Open Source models specialized for financial text are used to score news articles.
+Binary Flags (Key Decision): To give the low-level model temporal intelligence without complex Attention mechanisms, all raw indicator values were converted into binary flag features based on thresholds. These flags also incorporate state information from past candles (historical lookback).
 
 ---
 
-## 🚀 Usage
+## Data
 
-### Run backtests and generate reports (first you need to add your API key in settings)
-```bash
-pytest -s tests/
-python main.py
-```
-
-### Run live signal generation
-```bash
-python polling_bot.py
-```
+Data cleanliness and structure were critical to project success.
+Data Sources: OHLCV data (Exchange APIs) and a news dataset covering 2021 to 2024.
+Database: MySQL using the INNODB engine was selected for its proven scalability and transactional integrity. The database structure was mapped out in an ERD (Stage 2.1).
+Handling Missing News Data
+News data often contains critical missing values. The following strategy was implemented:
+Strategy: Forward Fill (ffill) applied with a 5-hour limit.
+Justification: A news item's impact is assumed to persist for up to 5 hours. If no news is present within that window, the feature is neutralized by being set to 0.
 
 ---
 
-## 🧠 Model Overview
-The trading bot uses a **two-stage ML model**:
+## Results  
+From July 2023 to January 2024
+Start capital: 10000.00
+Final capital: 11826.21
+Total return: 18.26%
+Trades: 116
+Win rate: 37.07%
 
-1. **Stage 1 – Trade vs Hold**  
-   - LightGBM classifier  
-   - Balanced with SMOTE  
-   - Cross-validation with TimeSeriesSplit  
-
-2. **Stage 2 – Buy vs Sell**  
-   - LightGBM classifier  
-   - Predicts trade direction  
-
-**Features / Indicators used**:  
-- Moving Averages (SMA, EMA, WMA)  
-- RSI, MACD, Stochastic Oscillator  
-- ATR (volatility measure)  
-- Bollinger Bands  
-- Volume-based indicators  
 
 ---
 
-## 📊 Data
-Input data format (`CSV`):
-```
-timestamp, open, high, low, close, volume
-2024-01-01 00:00:00, 42000, 42100, 41900, 42050, 123.45
-```
-
-- Recommended timeframe: **1h**  
-- Exchange: **Bybit**  
-
----
-
-## 📈 Results  
-- Win rate: 43%
-- Total profit: -2.02% 
+## Roadmap / TODO
+The primary goal (positive financial result and stability) has been achieved. Future improvements can focus on enhancing signal relevance and data volume:
+News Source Expansion: Integrate new, more timely sources (e.g., Twitter/X) for faster sentiment capture.
+NLP Model Retraining: Develop or retrain a specialized news assessment model for more accurate sentiment scoring tailored to crypto markets.
+Dataset Expansion: Increase the training data volume to further improve the model's generalization ability.
 
 
-![Equity Curve](static/reports/btc_close_price.html)   
-
----
-
-## 🔧 Configuration
-- **`users.json`** – stores user/sample configuration (signal delivery, access control)  
-- Parameters for training and testing can be adjusted in `config.py`  
-
----
-
-## 🛠 Roadmap / TODO
-- [ ] Add transformer-based models (TimesNet, Informer)      
-- [ ] Web dashboard for live monitoring  
-
----
-
-## ⚠️ Disclaimer
+## Disclaimer
 This project is for **educational and research purposes only**.  
 It does **not constitute financial advice**. Use at your own risk.
 
