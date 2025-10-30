@@ -30,10 +30,10 @@ def place_order(symbol, side, amount, price=None):
         else:
             order = exchange.create_market_order(symbol, side, amount, params=params)
 
-        print(f"✅ Order {side.upper()} executed: {amount} {symbol}")
+        print(f"Order {side.upper()} executed: {amount} {symbol}")
         return order
     except Exception as e:
-        print("❌ Error placing order:", e)
+        print("Error placing order:", e)
         return None
 
 
@@ -82,8 +82,8 @@ def place_stop_take_orders(symbol, side, amount, stop_loss_price, take_profit_pr
             }
         )
 
-        print(f"✅ Stop-loss and take-profit set for {symbol}")
+        print(f"Stop-loss and take-profit set for {symbol}")
     except Exception as e:
-        print("❌ Error setting stop-loss/take-profit:", e)
+        print("Error setting stop-loss/take-profit:", e)
 
 
